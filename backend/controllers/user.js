@@ -1,7 +1,7 @@
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
+const sanitize = require('mongo-sanitize');
 
 exports.signup = (req, res, next) => {
     bcrypt.hash(req.body.password, 10)
@@ -18,12 +18,16 @@ exports.signup = (req, res, next) => {
   };
 
   exports.login = (req, res, next) => {
-    User.findOne({ email: req.body.email })
+    // Adding mongo-sanitize to avoid noSQL injection attacks
+    let email = sanitize(req.body.email);
+    //let password = sanitize(req.body.password)
+    //
+    User.findOne({ email: email}) //req.body.email
       .then(user => {
         if (!user) {
           return res.status(401).json({ error: 'Utilisateur non trouvé !' });
         }
-        bcrypt.compare(req.body.password, user.password)
+        bcrypt.compare(req.body.password, user.password) // req.body.password
           .then(valid => {
             if (!valid) {
               return res.status(401).json({ error: 'Mot de passe incorrect !' });
