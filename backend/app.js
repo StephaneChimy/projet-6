@@ -8,10 +8,8 @@ const path = require('path');
 
 const app = express();
 
-
-
 // connexion to mongoDB
-mongoose.connect('mongodb+srv://admin:admin@cluster0.jamfu.mongodb.net/project6?retryWrites=true&w=majority',
+mongoose.connect('mongodb+srv://user:user@cluster0.jamfu.mongodb.net/project6?retryWrites=true&w=majority',
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))

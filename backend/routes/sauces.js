@@ -15,6 +15,6 @@ router.put('/:id',auth, multer, saucesCtrl.modifySauce);
 router.delete('/:id',auth, saucesCtrl.deleteSauce);
 
 //Add and remove sauces review
-router.post('/:id/like',auth, likesCtrl.addALike);
+router.post('/:id/like',auth, likesCtrl.addLikeOrDislike);
 
 module.exports = router;

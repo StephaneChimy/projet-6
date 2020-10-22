@@ -1,14 +1,14 @@
 const Sauce = require("../models/sauce");
 
-exports.addALike = (req, res, next) => {
+exports.addLikeOrDislike = (req, res, next) => {
   if (req.body.like == 1) {
     Sauce.updateOne(
       { _id: req.params.id },
       {
         $push: { usersLiked: [req.body.userId] },
         $inc: { likes: req.body.like },
-        ...req.body,
-        _id: req.params.id,
+        // ...req.body,
+        // _id: req.params.id,
       }
     )
 
@@ -22,8 +22,8 @@ exports.addALike = (req, res, next) => {
       {
         $push: { usersDisliked: [req.body.userId] },
         $inc: { dislikes: 1 },
-        ...req.body,
-        _id: req.params.id,
+        // ...req.body,
+        // _id: req.params.id,
       }
     )
 
@@ -43,7 +43,7 @@ exports.addALike = (req, res, next) => {
       }
       if (usersLikedFound == false) {
         console.log(
-          "Ya rien dans ton usersLiked ! => il avait pas aimé la sauce donc on enlève le vote des usersDisliked"
+          "Personne dans usersLiked ! => il n'avait donc pas aimé la sauce => on enlève le vote des usersDisliked"
         );
 
         Sauce.updateOne(
@@ -51,8 +51,8 @@ exports.addALike = (req, res, next) => {
           {
             $pull: { usersDisliked: req.body.userId },
             $inc: { dislikes: -1 },
-            ...req.body,
-            _id: req.params.id,
+            // ...req.body,
+            // _id: req.params.id,
           }
         )
           .then(() => res.status(200).json({ message: "Objet modifié !" }))
@@ -63,8 +63,8 @@ exports.addALike = (req, res, next) => {
           {
             $pull: { usersLiked: req.body.userId },
             $inc: { likes: -1 },
-            ...req.body,
-            _id: req.params.id,
+            // ...req.body,
+            // _id: req.params.id,
           }
         )
           .then(() => res.status(200).json({ message: "Objet modifié !" }))

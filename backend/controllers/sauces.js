@@ -9,18 +9,8 @@ exports.createSauce = (req, res, next) => {
     imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
   });
   sauce.save()
-  // ici on va modifier toutes les sauces pour reset les likes
-  .then(() => {
-    Sauce.updateMany(
-      {},
-      {$set: {likes: 0, dislikes: 0, usersLiked:[], usersDisliked:[]}},
-      {multi: true}
-    )
-    .then(() => res.status(201).json({ message: 'Objet enregistré !'}))
-    .catch(error => res.status(400).json({ error }));
-  })
-
-    
+  .then(() => res.status(201).json({ message: 'Objet enregistré !'}))
+  .catch(error => res.status(400).json({ error }));
 };
 
 exports.getOneSauce = (req, res, next) => {
