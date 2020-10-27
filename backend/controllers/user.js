@@ -1,19 +1,8 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const CryptoJS = require("crypto-js");
-
-function checkPassword(password) {
-  //Minimum eight characters, at least one letter and one number
-  const regularExp = RegExp("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$");
-  if (regularExp.test(password)) {
-    console.log("Strong assword!");
-    return true;
-  } else {
-    console.log("Weak password!");
-    return false;
-  }
-}
+const cryptoJS = require("crypto-js");
+const fonctions = require("./fonctions");
 
 exports.signup = (req, res, next) => {
   // Get emails in database to check if it already exist
@@ -21,11 +10,11 @@ exports.signup = (req, res, next) => {
     .then((users) => {
       let emailFound = false;
       for (index = 0; index < users.length; index++) {
-        let decryptedEmail = CryptoJS.AES.decrypt(
+        let decryptedEmail = cryptoJS.AES.decrypt(
           users[index].email,
           "Secret Passphrase"
         );
-        decryptedEmail = decryptedEmail.toString(CryptoJS.enc.Utf8);
+        decryptedEmail = decryptedEmail.toString(cryptoJS.enc.Utf8);
         console.log(decryptedEmail);
         if (decryptedEmail === req.body.email) {
           emailFound = true;
@@ -40,7 +29,7 @@ exports.signup = (req, res, next) => {
       console.log(emailFound);
       if (!emailFound) {
         //Encrypt the email with crypto-js ( Secret passphrase needs to be changed in production )
-        const emailEncrypted = CryptoJS.AES.encrypt(
+        const emailEncrypted = cryptoJS.AES.encrypt(
           req.body.email,
           "Secret Passphrase"
         );
@@ -79,11 +68,11 @@ exports.login = (req, res, next) => {
       let emailFound = false;
       //let decryptedEmails = [];
       for (index = 0; index < users.length; index++) {
-        let decryptedEmail = CryptoJS.AES.decrypt(
+        let decryptedEmail = cryptoJS.AES.decrypt(
           users[index].email,
           "Secret Passphrase"
         );
-        decryptedEmail = decryptedEmail.toString(CryptoJS.enc.Utf8);
+        decryptedEmail = decryptedEmail.toString(cryptoJS.enc.Utf8);
         console.log(decryptedEmail);
         if (decryptedEmail === req.body.email) {
           emailFound = true;
