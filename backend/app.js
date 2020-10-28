@@ -1,19 +1,25 @@
 const express = require("express");
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const Sauce = require('./models/sauce');
-const saucesRoutes = require('./routes/sauces');
-const userRoutes = require('./routes/user');
-const path = require('path');
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const Sauce = require("./models/sauce");
+const saucesRoutes = require("./routes/sauces");
+const userRoutes = require("./routes/user");
+const path = require("path");
+//Add the mongoose-morgan package for logs into mongoDB
+const mongooseMorgan = require("mongoose-morgan");
 
 const app = express();
 
+
+
 // connexion to mongoDB
-mongoose.connect('mongodb+srv://user:user@cluster0.jamfu.mongodb.net/project6?retryWrites=true&w=majority',
-  { useNewUrlParser: true,
-    useUnifiedTopology: true })
-  .then(() => console.log('Connexion à MongoDB réussie !'))
-  .catch(() => console.log('Connexion à MongoDB échouée !'));
+mongoose
+  .connect(
+    "mongodb+srv://user:user@cluster0.jamfu.mongodb.net/project6?retryWrites=true&w=majority",
+    { useNewUrlParser: true, useUnifiedTopology: true }
+  )
+  .then(() => console.log("Connexion à MongoDB réussie !"))
+  .catch(() => console.log("Connexion à MongoDB échouée !"));
 
 // Add CORS in the headers
 app.use((req, res, next) => {
@@ -31,11 +37,22 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());
 
+// Add logs with mongoose-morgan
+// Personnalise logs
+mongooseMorgan.token('body', (req, res) => JSON.stringify(req.body));
+//mongooseMorgan.token('req', (req, res) => JSON.stringify(req.headers.authorization));
+app.use(
+  mongooseMorgan({
+    connectionString:
+      "mongodb+srv://user:user@cluster0.jamfu.mongodb.net/project6?retryWrites=true&w=majority",
+  }, {}, 'date:date status::status method::method url::url body::body remote-addr::remote-addr referrer::referrer'
+  )
+);
+//
 
-app.use('/api/auth', userRoutes);
-app.use('/images', express.static(path.join(__dirname, 'images')));
-app.use('/api/sauces', saucesRoutes);
 
-
+app.use("/api/auth", userRoutes);
+app.use("/images", express.static(path.join(__dirname, "images")));
+app.use("/api/sauces", saucesRoutes);
 
 module.exports = app;
