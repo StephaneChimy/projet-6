@@ -1,4 +1,7 @@
 const mongoose = require("mongoose");
+// Add history plugin for mongoose
+const mongooseHistory = require('mongoose-history');
+//
 
 const sauceSchema = mongoose.Schema({
   //id: { type: String, required: true }, //Généré par mongoose?
@@ -15,5 +18,9 @@ const sauceSchema = mongoose.Schema({
   usersDisliked: [{ type: String }],
 });
 
+// Use mongoose history to create logs in database
+let options = {indexes: [{'t': -1, 'd._id': 1}]};
+sauceSchema.plugin(mongooseHistory, options);
+//
 
 module.exports = mongoose.model("Sauce", sauceSchema);

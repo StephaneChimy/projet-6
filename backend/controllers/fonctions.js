@@ -1,6 +1,6 @@
 function checkPassword(password) {
     //Minimum eight characters, at least one letter and one number
-    const regularExp = RegExp("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$");
+    const regularExp = RegExp("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{4,}$");
     if (regularExp.test(password)) {
       console.log("Strong password!");
       return true;

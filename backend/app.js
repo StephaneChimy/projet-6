@@ -7,9 +7,14 @@ const userRoutes = require("./routes/user");
 const path = require("path");
 //Add the mongoose-morgan package for logs into mongoDB
 const mongooseMorgan = require("mongoose-morgan");
+//
+
 
 const app = express();
 
+//debug mod
+mongoose.set('debug', true);
+//
 
 
 // connexion to mongoDB
