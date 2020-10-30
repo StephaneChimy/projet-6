@@ -21,7 +21,7 @@ mongoose.set('debug', true);
 mongoose
   .connect(
     "mongodb+srv://user:user@cluster0.jamfu.mongodb.net/project6?retryWrites=true&w=majority",
-    { useNewUrlParser: true, useUnifiedTopology: true }
+    { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false }
   )
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch(() => console.log("Connexion à MongoDB échouée !"));
@@ -43,16 +43,16 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 
 // Add logs with mongoose-morgan
-// Personnalise logs => n'enregistre que les requêtes ayant un status inférieur à 400
+// Personalise logs => Only record requests having a value under 400
 mongooseMorgan.token('body', (req, res) => JSON.stringify(req.body));
 //mongooseMorgan.token('req', (req, res) => JSON.stringify(req.headers.authorization));
-app.use(
-  mongooseMorgan({
-    connectionString:
-      "mongodb+srv://user:user@cluster0.jamfu.mongodb.net/project6?retryWrites=true&w=majority",
-  }, {skip: function (req, res) { return res.statusCode < 400 }}, 'date:date status::status method::method url::url body::body remote-addr::remote-addr referrer::referrer'
-  )
-);
+// app.use(
+//   mongooseMorgan({
+//     connectionString:
+//       "mongodb+srv://user:user@cluster0.jamfu.mongodb.net/project6?retryWrites=true&w=majority",
+//   }, {skip: function (req, res) { return res.statusCode < 400 }}, 'date:date status::status method::method url::url body::body remote-addr::remote-addr referrer::referrer'
+//   )
+// );
 //
 
 
