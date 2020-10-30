@@ -6,11 +6,7 @@ const functions = require("./functions");
 
 // Variables used to verify / lock a user
 const MAX_LOGIN_ATTEMPTS = 5;
-// 2 hours of lock
-//const LOCK_TIME = 2 * 60 * 60 * 1000;
-// 2 minutes of lock
-const LOCK_TIME = 2 * 60 * 1000;
-//
+
 
 exports.signup = (req, res, next) => {
   // Hash the email the have a unique validation
@@ -54,18 +50,15 @@ exports.login = (req, res, next) => {
         return res.status(401).json({ error: "Utilisateur non trouvé !" });
       }
       // Test if the account is already locked
-      try {
-        if (functions.checkIfAccountIsLocked(user.lockUntil)) {
-          console.log("Le compte est déjà bloqué");
-          let waitingTime = (user.lockUntil - Date.now()) / 1000 / 60;
-          return res.status(401).json({
-            error: "Compte bloqué, revenez dans: " + waitingTime + " minutes",
-          });
-        } else {
-          console.log("Le compte n'est pas bloqué");
-        }
-      } catch (e) {
-        console.log(e);
+
+      if (functions.checkIfAccountIsLocked(user.lockUntil)) {
+        console.log("Le compte est déjà bloqué");
+        let waitingTime = (user.lockUntil - Date.now()) / 1000 / 60;
+        return res.status(401).json({
+          error: "Compte bloqué, revenez dans: " + waitingTime + " minutes",
+        });
+      } else {
+        console.log("Le compte n'est pas bloqué");
       }
 
       // If the lockUntil is finished => reset loginAttempt
@@ -74,13 +67,8 @@ exports.login = (req, res, next) => {
         console.log(
           "Le compte était bloqué mais la date est dépassé => reset des loginAttempt"
         );
-        User.updateOne(
-          { emailHash: emailHashed },
-          {
-            $set: { loginAttempts: 0 },
-            $unset: { lockUntil: 1 },
-          }
-        )
+        functions.resetUserLockAttempt(emailHashed)
+          //
           .then(() => {
             bcrypt
               .compare(req.body.password, user.password)
@@ -88,12 +76,9 @@ exports.login = (req, res, next) => {
                 // If the password is wrong but the max connection attempt is not reached, then increment the loginAttempt by 1
                 if (!valid) {
                   // Increment value to the loginAttempts
-                  User.updateOne(
-                    { emailHash: emailHashed },
-                    {
-                      $inc: { loginAttempts: 1 },
-                    }
-                  ).catch((error) => console.log({ error }));
+                  functions
+                    .incrementLoginAttempt(emailHashed)
+                    .catch((error) => console.log({ error }));
                   //
                   return res
                     .status(401)
@@ -101,24 +86,10 @@ exports.login = (req, res, next) => {
                 } else {
                   // Reset value of loginAttempts
                   console.log("User connecté, reset des try");
-                  User.updateOne(
-                    { emailHash: emailHashed },
-                    {
-                      $set: { loginAttempts: 0 },
-                      $unset: { lockUntil: 1 },
-                    }
-                  )
+                  functions
+                    .resetUserLockAttempt(emailHashed)
                     .then(() => {
-                      return res.status(200).json({
-                        userId: user._id,
-                        token: jwt.sign(
-                          { userId: user._id },
-                          "RANDOM_TOKEN_SECRET",
-                          {
-                            expiresIn: "24h",
-                          }
-                        ),
-                      });
+                      functions.sendNewToken(req.userId, res);
                     })
                     .catch((error) => console.log({ error }));
                   //
@@ -133,19 +104,16 @@ exports.login = (req, res, next) => {
         bcrypt
           .compare(req.body.password, user.password)
           .then((valid) => {
+            console.log("n'a pas fait de reset");
             // If it's a wrong password and the connection attempt is reached, then block the account
             if (!valid && user.loginAttempts + 1 >= MAX_LOGIN_ATTEMPTS) {
               console.log("N'a pas fait de reset de loginAttempt");
               console.log(
                 "Limite d'essai de connection atteinte, blockage du compte"
               );
-              User.updateOne(
-                { emailHash: emailHashed },
-                {
-                  $inc: { loginAttempts: 1 },
-                  $set: { lockUntil: Date.now() + LOCK_TIME },
-                }
-              ).catch((error) => console.log({ error }));
+              functions
+                .blockUserAccount(emailHashed)
+                .catch((error) => console.log({ error }));
               return res.status(401).json({
                 error:
                   "Mot de passe incorrect ! Vous avez atteind le nombre maximum d'essai, votre compte est maintenant bloqué!",
@@ -154,33 +122,20 @@ exports.login = (req, res, next) => {
             // If the password is wrong but the max connection attempt is not reached, then increment the loginAttempt by 1
             if (!valid && user.loginAttempts + 1 < MAX_LOGIN_ATTEMPTS) {
               // Increment value to the loginAttempts
-              User.updateOne(
-                { emailHash: emailHashed },
-                {
-                  $inc: { loginAttempts: 1 },
-                }
-              ).catch((error) => console.log({ error }));
+              functions
+                .incrementLoginAttempt(emailHashed)
+                .catch((error) => console.log({ error }));
               //
               return res
                 .status(401)
                 .json({ error: "Mot de passe incorrect !" });
             }
             // Reset value of loginAttempts
-            console.log("User connecté, reset des try");
-            User.updateOne(
-              { emailHash: emailHashed },
-              {
-                $set: { loginAttempts: 0 },
-                $unset: { lockUntil: 1 },
-              }
-            )
+            console.log("User connecté, reset des loginAttempt");
+            functions
+              .resetUserLockAttempt(emailHashed)
               .then(() => {
-                res.status(200).json({
-                  userId: user._id,
-                  token: jwt.sign({ userId: user._id }, "RANDOM_TOKEN_SECRET", {
-                    expiresIn: "24h",
-                  }),
-                });
+                functions.sendNewToken(req.userId, res);
               })
               .catch((error) => console.log({ error }));
             //
