@@ -5,12 +5,19 @@ const Sauce = require("./models/sauce");
 const saucesRoutes = require("./routes/sauces");
 const userRoutes = require("./routes/user");
 const path = require("path");
-//Add the mongoose-morgan package for logs into mongoDB
+// Add the mongoose-morgan package for logs into mongoDB
 const mongooseMorgan = require("mongoose-morgan");
-//
+// Data Sanitization against XSS
+const xss = require('xss-clean');
+// Add 14 middleware to prevent few attacks
+const helmet = require('helmet');
+// Data Sanitization against NoSQL Injection Attacks
+const mongoSanitize = require('express-mongo-sanitize');
 
 
 const app = express();
+// Helmet
+app.use(helmet());
 
 //debug mod
 mongoose.set('debug', true);
@@ -41,6 +48,15 @@ app.use((req, res, next) => {
 });
 
 app.use(bodyParser.json());
+
+// Data Sanitization against NoSQL Injection Attacks
+app.use(mongoSanitize());
+
+// Prevent DOS attacks
+app.use(express.json({ limit: '10kb' })); // Body limit is 10
+//
+// Data Sanitization against XSS attacks
+app.use(xss());
 
 // Add logs with mongoose-morgan
 // Personalise logs => Only record requests having a value under 400
