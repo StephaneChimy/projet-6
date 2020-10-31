@@ -5,6 +5,8 @@ const Sauce = require("./models/sauce");
 const saucesRoutes = require("./routes/sauces");
 const userRoutes = require("./routes/user");
 const path = require("path");
+// Add configuration file
+const config = require('./config');
 // Add the mongoose-morgan package for logs into mongoDB
 const mongooseMorgan = require("mongoose-morgan");
 // Data Sanitization against XSS
@@ -14,12 +16,11 @@ const helmet = require('helmet');
 // Data Sanitization against NoSQL Injection Attacks
 const mongoSanitize = require('express-mongo-sanitize');
 
-
 const app = express();
 // Helmet
 app.use(helmet());
 
-//debug mod
+//debug mod of mongoose
 mongoose.set('debug', true);
 //
 
@@ -27,7 +28,7 @@ mongoose.set('debug', true);
 // connexion to mongoDB
 mongoose
   .connect(
-    "mongodb+srv://user:user@cluster0.jamfu.mongodb.net/project6?retryWrites=true&w=majority",
+    "mongodb+srv://" + config.user + ":" + config.password + "@cluster0.jamfu.mongodb.net/project6?retryWrites=true&w=majority",
     { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false }
   )
   .then(() => console.log("Connexion à MongoDB réussie !"))
