@@ -61,15 +61,15 @@ app.use(xss());
 
 // Add logs with mongoose-morgan
 // Personalise logs => Only record requests having a value under 400
-// mongooseMorgan.token('body', (req, res) => JSON.stringify(req.body));
-// mongooseMorgan.token('req', (req, res) => JSON.stringify(req.headers.authorization));
-// app.use(
-//   mongooseMorgan({
-//     connectionString:
-//       "mongodb+srv://" + config.user + ":" + config.password + "@cluster0.jamfu.mongodb.net/project6?retryWrites=true&w=majority",
-//   }, {skip: function (req, res) { return res.statusCode < 400 }}, 'date:date status::status method::method url::url body::body remote-addr::remote-addr referrer::referrer'
-//   )
-// );
+mongooseMorgan.token('body', (req, res) => JSON.stringify(req.body));
+mongooseMorgan.token('req', (req, res) => JSON.stringify(req.headers.authorization));
+app.use(
+  mongooseMorgan({
+    connectionString:
+      "mongodb+srv://" + config.user + ":" + config.password + "@cluster0.jamfu.mongodb.net/project6?retryWrites=true&w=majority",
+  }, {skip: function (req, res) { return res.statusCode < 400 }}, 'date:date status::status method::method url::url body::body remote-addr::remote-addr referrer::referrer'
+  )
+);
 //
 
 
