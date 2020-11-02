@@ -2,10 +2,9 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 // 2 hours of lock
 //const LOCK_TIME = 2 * 60 * 60 * 1000;
-// 2 minutes of lock
-const LOCK_TIME = 2 * 60 * 1000;
+// 1 minutes of lock
+const LOCK_TIME = 60 * 1000;
 //
-
 
 function checkPassword(password) {
   //Minimum eight characters, at least one letter and one number

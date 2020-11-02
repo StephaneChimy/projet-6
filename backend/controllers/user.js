@@ -7,7 +7,6 @@ const functions = require("./functions");
 // Variables used to verify / lock a user
 const MAX_LOGIN_ATTEMPTS = 5;
 
-
 exports.signup = (req, res, next) => {
   // Hash the email the have a unique validation
   let emailHashed = cryptoJS.MD5(req.body.email).toString();
@@ -50,7 +49,6 @@ exports.login = (req, res, next) => {
         return res.status(401).json({ error: "Utilisateur non trouvé !" });
       }
       // Test if the account is already locked
-
       if (functions.checkIfAccountIsLocked(user.lockUntil)) {
         console.log("Le compte est déjà bloqué");
         let waitingTime = (user.lockUntil - Date.now()) / 1000 / 60;
@@ -67,7 +65,8 @@ exports.login = (req, res, next) => {
         console.log(
           "Le compte était bloqué mais la date est dépassé => reset des loginAttempt"
         );
-        functions.resetUserLockAttempt(emailHashed)
+        functions
+          .resetUserLockAttempt(emailHashed)
           //
           .then(() => {
             bcrypt
@@ -83,15 +82,13 @@ exports.login = (req, res, next) => {
                   return res
                     .status(401)
                     .json({ error: "Mot de passe incorrect !" });
-                } else {
-                  // Reset value of loginAttempts
-                  console.log("User connecté, reset des try");
-                  functions
-                    .resetUserLockAttempt(emailHashed)
-                    .then(() => {
-                      functions.sendNewToken(req.userId, res);
-                    })
-                    .catch((error) => console.log({ error }));
+                }
+                
+                 else {
+                  // Just send the token
+                  console.log("User connecté, envoi d'un simple token");
+                  functions.sendNewToken(user._id, res)
+                    //.catch((error) => console.log({ error }));
                   //
                 }
               })
@@ -130,15 +127,24 @@ exports.login = (req, res, next) => {
                 .status(401)
                 .json({ error: "Mot de passe incorrect !" });
             }
-            // Reset value of loginAttempts
-            console.log("User connecté, reset des loginAttempt");
-            functions
-              .resetUserLockAttempt(emailHashed)
-              .then(() => {
-                functions.sendNewToken(req.userId, res);
-              })
-              .catch((error) => console.log({ error }));
-            //
+            // If the user is connected but had loginAttempt > 0 => reset try
+            if (user.loginAttempts > 0) {
+              console.log("User connecté, reset des try + envoi du token");
+              functions
+                .resetUserLockAttempt(emailHashed)
+                .then(() => {
+                  functions.sendNewToken(user._id, res);
+                })
+                .catch((error) => console.log({ error }));
+            }else{
+              // Just send a new token
+              console.log("User connecté, envoi du token");
+              console.log(user._id);
+              
+                functions.sendNewToken(user._id, res);
+              //.catch((error) => console.log({ error }));
+            }
+            
           })
           .catch((error) => res.status(500).json({ error }));
       }

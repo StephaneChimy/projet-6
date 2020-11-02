@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 // Add history plugin for mongoose
-const mongooseHistory = require('mongoose-history');
+const diffHistory = require('mongoose-diff-history/diffHistory');
 //
 
 const sauceSchema = mongoose.Schema({
@@ -18,9 +18,8 @@ const sauceSchema = mongoose.Schema({
   usersDisliked: [{ type: String }],
 });
 
-// Use mongoose history to create logs in database
-let options = {indexes: [{'t': -1, 'd._id': 1}]};
-sauceSchema.plugin(mongooseHistory, options);
+// Use mongoose history to create logs in histories collection database
+sauceSchema.plugin(diffHistory.plugin);
 //
 
 module.exports = mongoose.model("Sauce", sauceSchema);

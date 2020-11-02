@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const uniqueValidator = require("mongoose-unique-validator");
 // Add history plugin for mongoose
-const mongooseHistory = require("mongoose-history");
+const diffHistory = require('mongoose-diff-history/diffHistory');
 //
 
 const userSchema = mongoose.Schema({
@@ -19,9 +19,9 @@ const userSchema = mongoose.Schema({
 
 userSchema.plugin(uniqueValidator);
 
-// Use mongoose history to create logs in database
-let options = { indexes: [{ t: -1, "d._id": 1 }] };
-//userSchema.plugin(mongooseHistory, options);
+// Use mongoose history to create logs in histories collection database
+userSchema.plugin(diffHistory.plugin);
+
 //
 
 module.exports = mongoose.model("User", userSchema);
