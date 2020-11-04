@@ -1,3 +1,3 @@
-.DS_
+*.DS_
 /frontend
 /backend/node_modules
