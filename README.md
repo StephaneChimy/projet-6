@@ -15,5 +15,9 @@ Projet 6 sur le site openclassrooms:
 
 2 - Install the frontend from https://github.com/OpenClassrooms-Student-Center/dwj-projet6 and run node server (follow the readme)
 
-3 - Get back in the backend folder you previously cloned and run npm start from it.
+3 - Get back in the backend folder you previously cloned and run npm install from it.
+
+4 - Run npm start (still from the backend folder).
+
+5 - You can start playing with the API on http://localhost:4200/
 
