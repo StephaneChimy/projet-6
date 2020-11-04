@@ -7,8 +7,6 @@ Projet 6 sur le site openclassrooms:
 - Mettre en œuvre des opérations CRUD de manière sécurisée
 
 
-# Installation: 
-
 # Installation:
 
 1 - "git clone https://github.com/StephaneChimy/projet-6" into the folder of your choice
