@@ -9,7 +9,7 @@ Projet 6 sur le site openclassrooms:
 
 # Installation:
 
-1 - "git clone https://github.com/StephaneChimy/projet-6" into the folder of your choice
+1 - "git clone https://github.com/StephaneChimy/projet-6.git" into the folder of your choice
 
 2 - Install the frontend from https://github.com/OpenClassrooms-Student-Center/dwj-projet6 and run node server (follow the readme)
 
