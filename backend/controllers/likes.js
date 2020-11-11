@@ -5,7 +5,7 @@ exports.addLikeOrDislike = (req, res, next) => {
     Sauce.updateOne(
       { _id: req.params.id },
       {
-        $push: { usersLiked: [req.body.userId] },
+        $push: { usersLiked: req.body.userId },
         $inc: { likes: req.body.like },
         // ...req.body,
         // _id: req.params.id,
@@ -20,7 +20,7 @@ exports.addLikeOrDislike = (req, res, next) => {
     Sauce.updateOne(
       { _id: req.params.id },
       {
-        $push: { usersDisliked: [req.body.userId] },
+        $push: { usersDisliked: req.body.userId },
         $inc: { dislikes: 1 },
         // ...req.body,
         // _id: req.params.id,
