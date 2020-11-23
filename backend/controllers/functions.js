@@ -7,7 +7,8 @@ const LOCK_TIME = 60 * 1000;
 //
 
 function checkPassword(password) {
-  //Minimum eight characters, at least one letter and one number
+  // Here minimum 4 characters, at least one letter and one number
+  // This needs to be changed in production with a minimum of 8 characters and a maximum.
   const regularExp = RegExp("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{4,}$");
   if (regularExp.test(password)) {
     console.log("Strong password!");
