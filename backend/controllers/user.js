@@ -46,25 +46,21 @@ exports.login = (req, res, next) => {
     .then((user) => {
       // If the user is not found return error
       if (!user) {
-        return res.status(401).json({ error: "Utilisateur non trouvé !" });
+        return res
+          .status(401)
+          .json({ error: "Nom d'utilisateur (ou mot de passe) incorrect" });
       }
       // Test if the account is already locked
       if (functions.checkIfAccountIsLocked(user.lockUntil)) {
-        console.log("Le compte est déjà bloqué");
         let waitingTime = (user.lockUntil - Date.now()) / 1000 / 60;
         return res.status(401).json({
           error: "Compte bloqué, revenez dans: " + waitingTime + " minutes",
         });
-      } else {
-        console.log("Le compte n'est pas bloqué");
       }
 
       // If the lockUntil is finished => reset loginAttempt
       if (user.lockUntil && user.lockUntil <= Date.now()) {
         // Reset of loginAttempt
-        console.log(
-          "Le compte était bloqué mais la date est dépassé => reset des loginAttempt"
-        );
         functions
           .resetUserLockAttempt(emailHashed)
           //
@@ -81,14 +77,11 @@ exports.login = (req, res, next) => {
                   //
                   return res
                     .status(401)
-                    .json({ error: "Mot de passe incorrect !" });
-                }
-                
-                 else {
-                  // Just send the token
-                  console.log("User connecté, envoi d'un simple token");
-                  functions.sendNewToken(user._id, res)
-                    //.catch((error) => console.log({ error }));
+                    .json({ error: "Mot de passe (ou email) incorrect !" });
+                } else {
+                  // User connected, send a simple toker
+                  functions.sendNewToken(user._id, res);
+                  //.catch((error) => console.log({ error }));
                   //
                 }
               })
@@ -101,10 +94,8 @@ exports.login = (req, res, next) => {
         bcrypt
           .compare(req.body.password, user.password)
           .then((valid) => {
-            console.log("n'a pas fait de reset");
             // If it's a wrong password and the connection attempt is reached, then block the account
             if (!valid && user.loginAttempts + 1 >= MAX_LOGIN_ATTEMPTS) {
-              console.log("N'a pas fait de reset de loginAttempt");
               console.log(
                 "Limite d'essai de connection atteinte, blockage du compte"
               );
@@ -113,7 +104,7 @@ exports.login = (req, res, next) => {
                 .catch((error) => console.log({ error }));
               return res.status(401).json({
                 error:
-                  "Mot de passe incorrect ! Vous avez atteind le nombre maximum d'essai, votre compte est maintenant bloqué!",
+                  "Mot de passe (ou email) incorrect ! Vous avez atteind le nombre maximum d'essai, votre compte est maintenant bloqué!",
               });
             }
             // If the password is wrong but the max connection attempt is not reached, then increment the loginAttempt by 1
@@ -125,26 +116,20 @@ exports.login = (req, res, next) => {
               //
               return res
                 .status(401)
-                .json({ error: "Mot de passe incorrect !" });
+                .json({ error: "Mot de passe (ou email) incorrect !" });
             }
-            // If the user is connected but had loginAttempt > 0 => reset try
+            // If the user is connected but had loginAttempt > 0 => reset try + send token
             if (user.loginAttempts > 0) {
-              console.log("User connecté, reset des try + envoi du token");
               functions
                 .resetUserLockAttempt(emailHashed)
                 .then(() => {
                   functions.sendNewToken(user._id, res);
                 })
                 .catch((error) => console.log({ error }));
-            }else{
+            } else {
               // Just send a new token
-              console.log("User connecté, envoi du token");
-              console.log(user._id);
-              
-                functions.sendNewToken(user._id, res);
-              //.catch((error) => console.log({ error }));
+              functions.sendNewToken(user._id, res);
             }
-            
           })
           .catch((error) => res.status(500).json({ error }));
       }

@@ -7,8 +7,6 @@ exports.addLikeOrDislike = (req, res, next) => {
       {
         $push: { usersLiked: req.body.userId },
         $inc: { likes: req.body.like },
-        // ...req.body,
-        // _id: req.params.id,
       }
     )
 
@@ -22,8 +20,6 @@ exports.addLikeOrDislike = (req, res, next) => {
       {
         $push: { usersDisliked: req.body.userId },
         $inc: { dislikes: 1 },
-        // ...req.body,
-        // _id: req.params.id,
       }
     )
 
@@ -32,8 +28,6 @@ exports.addLikeOrDislike = (req, res, next) => {
   }
 
   if (req.body.like == 0) {
-    console.log(req.params);
-    console.log(req.body);
     Sauce.findOne({ _id: req.params.id }).then((sauce) => {
       let usersLikedFound = false;
       for (index = 0; index < sauce.usersLiked.length; index++) {
@@ -41,18 +35,13 @@ exports.addLikeOrDislike = (req, res, next) => {
           usersLikedFound = true;
         }
       }
+      // If the user is not in userLiked => that mean he disliked the sauce, so cancel the vote in userDisliked
       if (usersLikedFound == false) {
-        console.log(
-          "Personne dans usersLiked ! => il n'avait donc pas aimé la sauce => on enlève le vote des usersDisliked"
-        );
-
         Sauce.updateOne(
           { _id: req.params.id },
           {
             $pull: { usersDisliked: req.body.userId },
             $inc: { dislikes: -1 },
-            // ...req.body,
-            // _id: req.params.id,
           }
         )
           .then(() => res.status(200).json({ message: "Objet modifié !" }))
@@ -63,8 +52,6 @@ exports.addLikeOrDislike = (req, res, next) => {
           {
             $pull: { usersLiked: req.body.userId },
             $inc: { likes: -1 },
-            // ...req.body,
-            // _id: req.params.id,
           }
         )
           .then(() => res.status(200).json({ message: "Objet modifié !" }))
