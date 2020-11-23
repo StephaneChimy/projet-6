@@ -11,9 +11,9 @@ Projet 6 sur le site openclassrooms:
 
 1 - Create a folder named peckoko and get into it.
 
-> ```mkdire peckoko```
+ ```mkdire peckoko```
 
-> ```cd peckoko```
+ ```cd peckoko```
 
 1 - "git clone https://github.com/StephaneChimy/projet-6.git" into the folder of your choice
 
