@@ -40,7 +40,9 @@ Projet 6 sur le site openclassrooms:
 4 - Get back into peckoko/projet-6, get into the backend folder and install it.
 
 ```cd ../projet-6/backend```
+
 ```cd backend```
+
 ```npm install```
 
 4 - Run npm start (still from the backend folder).
