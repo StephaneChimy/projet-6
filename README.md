@@ -12,6 +12,7 @@ Projet 6 sur le site openclassrooms:
 1 - Create a folder named peckoko and get into it
 
  ```mkdire peckoko```
+ 
  ```cd peckoko```
 
 2 - Clone the backend repository (into peckoco folder).
@@ -29,7 +30,9 @@ Projet 6 sur le site openclassrooms:
 (You'll now have a dwj-projet6 folder into peckoko folder)
 
 ```cd dwj-projet6```
+
 ```npm install --save node-sass@4.14.1```
+
 ```ng serve```
 
 (The frontend should run on the 4200 port)
