@@ -21,7 +21,7 @@ const app = express();
 app.use(helmet());
 
 //debug mod of mongoose
-mongoose.set('debug', true);
+//mongoose.set('debug', true);
 //
 
 
