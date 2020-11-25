@@ -1,6 +1,6 @@
 const user = require("./models/user");
 
-// mongoose identifier
+// mongoDB identifier
 
 module.exports = {
     user: "user",
