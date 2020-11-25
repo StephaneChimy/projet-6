@@ -104,7 +104,7 @@ exports.login = (req, res, next) => {
                 .catch((error) => console.log({ error }));
               return res.status(401).json({
                 error:
-                  "Mot de passe (ou email) incorrect ! Vous avez atteind le nombre maximum d'essai, votre compte est maintenant bloqué!",
+                  "Mot de passe (ou email) incorrect ! Vous avez atteint le nombre maximum d'essai, votre compte est maintenant bloqué!",
               });
             }
             // If the password is wrong but the max connection attempt is not reached, then increment the loginAttempt by 1
