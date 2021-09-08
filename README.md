@@ -17,7 +17,7 @@
 [issues-shield]: https://img.shields.io/github/issues/StephaneChimy/projet-6.svg?style=for-the-badge
 [issues-url]: https://github.com/StephaneChimy/projet-6/issues
 [license-shield]: https://img.shields.io/github/license/StephaneChimy/projet-6?style=for-the-badge
-[license-url]: https://github.com/StephaneChimy/projet-6/blob/master/LICENSE
+[license-url]: https://github.com/StephaneChimy/projet-6/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/stephane-chimy
 [product-screenshot]: /responsive.png
